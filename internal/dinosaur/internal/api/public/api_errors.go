@@ -42,7 +42,7 @@ func (a *ErrorsApiService) GetErrorById(ctx _context.Context, id string) (Error,
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/errors/{id}"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/errors/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -118,7 +118,7 @@ func (a *ErrorsApiService) GetErrors(ctx _context.Context) (ErrorList, *_nethttp
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/errors"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/errors"
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
