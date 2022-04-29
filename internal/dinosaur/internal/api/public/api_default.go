@@ -45,7 +45,7 @@ func (a *DefaultApiService) CreateDinosaur(ctx _context.Context, async bool, din
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/centrals"
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -183,7 +183,7 @@ func (a *DefaultApiService) DeleteDinosaurById(ctx _context.Context, id string, 
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs/{id}"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/dinosaurs/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -310,7 +310,7 @@ func (a *DefaultApiService) FederateMetrics(ctx _context.Context, id string) (st
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs/{id}/metrics/federate"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/dinosaurs/{id}/metrics/federate"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -437,7 +437,7 @@ func (a *DefaultApiService) GetCloudProviderRegions(ctx _context.Context, id str
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/cloud_providers/{id}/regions"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/cloud_providers/{id}/regions"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -550,7 +550,7 @@ func (a *DefaultApiService) GetCloudProviders(ctx _context.Context, localVarOpti
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/cloud_providers"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/cloud_providers"
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -650,7 +650,7 @@ func (a *DefaultApiService) GetDinosaurById(ctx _context.Context, id string) (Di
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs/{id}"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/dinosaurs/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -778,7 +778,7 @@ func (a *DefaultApiService) GetDinosaurs(ctx _context.Context, localVarOptionals
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/centrals"
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -911,7 +911,7 @@ func (a *DefaultApiService) GetMetricsByInstantQuery(ctx _context.Context, id st
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs/{id}/metrics/query"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/dinosaurs/{id}/metrics/query"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1027,7 +1027,7 @@ func (a *DefaultApiService) GetMetricsByRangeQuery(ctx _context.Context, id stri
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs/{id}/metrics/query_range"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/dinosaurs/{id}/metrics/query_range"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1147,7 +1147,7 @@ func (a *DefaultApiService) GetServiceStatus(ctx _context.Context) (ServiceStatu
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/status"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/status"
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -1230,7 +1230,7 @@ func (a *DefaultApiService) GetVersionMetadata(ctx _context.Context) (VersionMet
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1"
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -1306,7 +1306,7 @@ func (a *DefaultApiService) UpdateDinosaurById(ctx _context.Context, id string, 
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/dinosaurs_mgmt/v1/dinosaurs/{id}"
+	localVarPath := a.client.cfg.BasePath + "/api/rhacs/v1/dinosaurs/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)

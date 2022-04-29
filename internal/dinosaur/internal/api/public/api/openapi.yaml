@@ -13,7 +13,7 @@ servers:
 - description: current domain
   url: /
 paths:
-  /api/dinosaurs_mgmt/v1:
+  /api/rhacs/v1:
     get:
       operationId: getVersionMetadata
       responses:
@@ -24,7 +24,7 @@ paths:
                 $ref: '#/components/schemas/VersionMetadata'
           description: Version metadata
       summary: Returns the version metadata
-  /api/dinosaurs_mgmt/v1/errors/{id}:
+  /api/rhacs/v1/errors/{id}:
     get:
       operationId: getErrorById
       parameters:
@@ -46,7 +46,7 @@ paths:
       summary: Returns the error by id
       tags:
       - errors
-  /api/dinosaurs_mgmt/v1/errors:
+  /api/rhacs/v1/errors:
     get:
       operationId: getErrors
       responses:
@@ -59,7 +59,7 @@ paths:
       summary: Returns the list of possible API errors
       tags:
       - errors
-  /api/dinosaurs_mgmt/v1/status:
+  /api/rhacs/v1/status:
     get:
       operationId: getServiceStatus
       responses:
@@ -82,7 +82,7 @@ paths:
       - Bearer: []
       summary: Returns the status of resources, such as whether maximum service capacity
         has been reached
-  /api/dinosaurs_mgmt/v1/dinosaurs/{id}:
+  /api/rhacs/v1/dinosaurs/{id}:
     delete:
       operationId: deleteDinosaurById
       parameters:
@@ -280,7 +280,7 @@ paths:
       security:
       - Bearer: []
       summary: Update a Dinosaur instance by id
-  /api/dinosaurs_mgmt/v1/dinosaurs:
+  /api/rhacs/v1/centrals:
     get:
       operationId: getDinosaurs
       parameters:
@@ -528,7 +528,7 @@ paths:
       security:
       - Bearer: []
       summary: Creates a Dinosaur request
-  /api/dinosaurs_mgmt/v1/cloud_providers:
+  /api/rhacs/v1/cloud_providers:
     get:
       operationId: getCloudProviders
       parameters:
@@ -582,7 +582,7 @@ paths:
       security:
       - Bearer: []
       summary: Returns the list of supported cloud providers
-  /api/dinosaurs_mgmt/v1/cloud_providers/{id}/regions:
+  /api/rhacs/v1/cloud_providers/{id}/regions:
     get:
       operationId: getCloudProviderRegions
       parameters:
@@ -657,7 +657,7 @@ paths:
       security:
       - Bearer: []
       summary: Returns the list of supported regions of the supported cloud provider
-  /api/dinosaurs_mgmt/v1/dinosaurs/{id}/metrics/query_range:
+  /api/rhacs/v1/dinosaurs/{id}/metrics/query_range:
     get:
       operationId: getMetricsByRangeQuery
       parameters:
@@ -739,7 +739,7 @@ paths:
       security:
       - Bearer: []
       summary: Returns metrics with timeseries range query by Dinosaur ID
-  /api/dinosaurs_mgmt/v1/dinosaurs/{id}/metrics/query:
+  /api/rhacs/v1/dinosaurs/{id}/metrics/query:
     get:
       operationId: getMetricsByInstantQuery
       parameters:
@@ -791,7 +791,7 @@ paths:
       security:
       - Bearer: []
       summary: Returns metrics with instant query by Dinosaur ID
-  /api/dinosaurs_mgmt/v1/dinosaurs/{id}/metrics/federate:
+  /api/rhacs/v1/dinosaurs/{id}/metrics/federate:
     get:
       operationId: federateMetrics
       parameters:
@@ -865,7 +865,7 @@ components:
       value:
         id: 1iSY6RQ3JKI8Q0OTmjQFd3ocFRg
         kind: dinosaur
-        href: /api/dinosaurs_mgmt/v1/dinosaurs/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg
+        href: /api/rhacs/v1/dinosaurs/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg
         status: ready
         cloud_provider: aws
         multi_az: true
@@ -881,7 +881,7 @@ components:
       value:
         id: 1iSY6RQ3JKI8Q0OTmjQFd3ocFRg
         kind: dinosaur
-        href: /api/dinosaurs_mgmt/v1/dinosaurs/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg
+        href: /api/rhacs/v1/dinosaurs/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg
         status: failed
         cloud_provider: aws
         multi_az: true
@@ -934,7 +934,7 @@ components:
       value:
         id: "103"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/103
+        href: /api/rhacs/v1/errors/103
         code: DINOSAURS-MGMT-103
         reason: Synchronous action is not supported, use async=true parameter
         operation_id: 1iWIimqGcrDuL61aUxIZqBTqNRa
@@ -942,7 +942,7 @@ components:
       value:
         id: "103"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/103
+        href: /api/rhacs/v1/errors/103
         code: DINOSAURS-MGMT-103
         reason: Synchronous action is not supported, use async=true parameter
         operation_id: 1iWIimqGcrDuL61aUxIZqBTqNRa
@@ -950,7 +950,7 @@ components:
       value:
         id: "23"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/23
+        href: /api/rhacs/v1/errors/23
         code: DINOSAURS-MGMT-23
         reason: 'Failed to parse search query: Unable to list Dinosaur requests for
           api_dinosaur_service: DINOSAURS-MGMT-23: Failed to parse search query: Unsupported
@@ -961,7 +961,7 @@ components:
       value:
         id: "21"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/21
+        href: /api/rhacs/v1/errors/21
         code: DINOSAURS-MGMT-21
         reason: 'missing path parameter: dinosaur id'
         operation_id: 1lWDGuybIrEnxrAem724gqkkiDv
@@ -969,14 +969,14 @@ components:
       value:
         id: "7"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/7
+        href: /api/rhacs/v1/errors/7
         code: DINOSAURS-MGMT-7
         reason: The requested resource doesn't exist
     "404DeleteExample":
       value:
         id: "7"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/7
+        href: /api/rhacs/v1/errors/7
         code: DINOSAURS-MGMT-7
         reason: DinosaurResource with id='1iK3duVYIvv5YvLlyz1mGR3JyqN' not found
         operation_id: 1iYO7g2g6HTdUKUa2ksH82kQD3y
@@ -984,7 +984,7 @@ components:
       value:
         id: "11"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/11
+        href: /api/rhacs/v1/errors/11
         code: DINOSAURS-MGMT-11
         reason: 'Unable to verify JWT token: Required authorization token not found'
         operation_id: 1iY3UhEhwmXBpWPfI2lNekpd4ZD
@@ -992,7 +992,7 @@ components:
       value:
         id: "4"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/4
+        href: /api/rhacs/v1/errors/4
         code: DINOSAURS-MGMT-4
         reason: User 'foo-bar' is not authorized to access the service.
         operation_id: 1lY3UiEhznXBpWPfI2lNejpd4YC
@@ -1000,7 +1000,7 @@ components:
       value:
         id: "5"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/5
+        href: /api/rhacs/v1/errors/5
         code: DINOSAURS-MGMT-5
         reason: User 'foo-bar' has reached a maximum number of 6 allowed instances.
         operation_id: 1lY3UiEkxnXBpVPeI2oNejd3XB
@@ -1008,7 +1008,7 @@ components:
       value:
         id: "12"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/12
+        href: /api/rhacs/v1/errors/12
         code: DINOSAURS-MGMT-12
         reason: Required terms have not been accepted
         operation_id: kXCzWPeI2oXBpVPeI2LvF9jMQY
@@ -1016,7 +1016,7 @@ components:
       value:
         id: "36"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/36
+        href: /api/rhacs/v1/errors/36
         code: DINOSAURS-MGMT-36
         reason: Dinosaur cluster name is already used
         operation_id: 6kY0UiEkzkXCzWPeI2oYehd3ED
@@ -1024,7 +1024,7 @@ components:
       value:
         id: "9"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/9
+        href: /api/rhacs/v1/errors/9
         code: DINOSAURS-MGMT-9
         reason: Unspecified error
         operation_id: 1ieELvF9jMQY6YghfM9gGRsHvEW
@@ -1032,7 +1032,7 @@ components:
       value:
         id: "9"
         kind: Error
-        href: /api/dinosaurs_mgmt/v1/errors/9
+        href: /api/rhacs/v1/errors/9
         code: DINOSAURS-MGMT-9
         reason: 'error deleting syncset: OCM-EX-9: failed to delete syncset: ext-serviceapi-1ix03lndlmq0qfc7sita5sljv8e
           for cluster id: 1g5d88q0lrcdv4g7alb7slfgnj3dhbsj%!(EXTRA *errors.Error=identifier
@@ -1463,7 +1463,7 @@ components:
             - $ref: '#/components/schemas/DinosaurRequest'
           type: array
     VersionMetadata_allOf:
-      example: '{"kind":"APIVersion","id":"v1","href":"/api/dinosaurs_mgmt/v1","collections":[{"id":"dinosaurs","href":"/api/dinosaurs_mgmt/v1/dinosaurs","kind":"DinosaurList"}]}'
+      example: '{"kind":"APIVersion","id":"v1","href":"/api/rhacs/v1","collections":[{"id":"dinosaurs","href":"/api/rhacs/v1/dinosaurs","kind":"DinosaurList"}]}'
       properties:
         collections:
           items:

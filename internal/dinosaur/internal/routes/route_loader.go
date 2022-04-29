@@ -111,7 +111,7 @@ func (s *options) buildApiBaseRouter(mainRouter *mux.Router, basePath string, op
 		ID:   "dinosaurs",
 		Kind: "DinosaurList",
 	})
-	apiV1DinosaursRouter := apiV1Router.PathPrefix("/dinosaurs").Subrouter()
+	apiV1DinosaursRouter := apiV1Router.PathPrefix("/centrals").Subrouter()
 	apiV1DinosaursRouter.HandleFunc("/{id}", dinosaurHandler.Get).
 		Name(logger.NewLogEvent("get-dinosaur", "get a dinosaur instance").ToString()).
 		Methods(http.MethodGet)
@@ -170,7 +170,7 @@ func (s *options) buildApiBaseRouter(mainRouter *mux.Router, basePath string, op
 		Collections: v1Collections,
 	}
 	apiMetadata := api.Metadata{
-		ID: "dinosaurs_mgmt",
+		ID: "rhacs",
 		Versions: []api.VersionMetadata{
 			v1Metadata,
 		},
