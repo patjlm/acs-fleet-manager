@@ -10,14 +10,19 @@ import (
 func ConvertDinosaurRequest(dinosaurRequestPayload public.CentralRequestPayload, dbDinosaurrequest ...*dbapi.DinosaurRequest) *dbapi.DinosaurRequest {
 	// TODO implement converter
 	var dinosaur *dbapi.DinosaurRequest = &dbapi.DinosaurRequest{}
+	ConvertDinosaurRequestInPlace(dinosaurRequestPayload, dinosaur)
+	return dinosaur
+}
 
+// ConvertDinosaurRequestInPlace from payload to DinosaurRequest
+func ConvertDinosaurRequestInPlace(dinosaurRequestPayload public.CentralRequestPayload, dinosaur *dbapi.DinosaurRequest) {
+	// TODO implement converter
 	dinosaur.Region = dinosaurRequestPayload.Region
 	dinosaur.Name = dinosaurRequestPayload.Name
 	dinosaur.CloudProvider = dinosaurRequestPayload.CloudProvider
 	dinosaur.MultiAZ = dinosaurRequestPayload.MultiAz
-
-	return dinosaur
 }
+
 
 // PresentDinosaurRequest - create CentralRequest in an appropriate format ready to be returned by the API
 func PresentDinosaurRequest(request *dbapi.DinosaurRequest) public.CentralRequest {
@@ -35,7 +40,7 @@ func PresentDinosaurRequest(request *dbapi.DinosaurRequest) public.CentralReques
 		CreatedAt: request.CreatedAt,
 		UpdatedAt: request.UpdatedAt,
 		FailedReason: request.FailedReason,
-		Version: "", // TODO(ROX-10709)
+		Version: request.ActualDinosaurVersion,
 		InstanceType: request.InstanceType,
 	}
 }

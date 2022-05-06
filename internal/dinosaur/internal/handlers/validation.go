@@ -92,14 +92,14 @@ func ValidateCloudProvider(dinosaurService *services.DinosaurService, dinosaurRe
 
 func ValidateDinosaurClaims(ctx context.Context, dinosaurRequestPayload *public.CentralRequestPayload, dinosaurRequest *dbapi.DinosaurRequest) handlers.Validate {
 	return func() *errors.ServiceError {
-		dinosaurRequest = presenters.ConvertDinosaurRequest(*dinosaurRequestPayload, dinosaurRequest)
+		presenters.ConvertDinosaurRequestInPlace(*dinosaurRequestPayload, dinosaurRequest)
 		claims, err := auth.GetClaimsFromContext(ctx)
 		if err != nil {
 			return errors.Unauthenticated("user not authenticated")
 		}
-		(*dinosaurRequest).Owner = auth.GetUsernameFromClaims(claims)
-		(*dinosaurRequest).OrganisationId = auth.GetOrgIdFromClaims(claims)
-		(*dinosaurRequest).OwnerAccountId = auth.GetAccountIdFromClaims(claims)
+		dinosaurRequest.Owner = auth.GetUsernameFromClaims(claims)
+		dinosaurRequest.OrganisationId = auth.GetOrgIdFromClaims(claims)
+		dinosaurRequest.OwnerAccountId = auth.GetAccountIdFromClaims(claims)
 
 		return nil
 	}
