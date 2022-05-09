@@ -5,7 +5,7 @@ import (
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/internal/api/private"
 )
 
-func ConvertDataPlaneDinosaurStatus(status map[string]private.DataPlaneDinosaurStatus) []*dbapi.DataPlaneDinosaurStatus {
+func ConvertDataPlaneDinosaurStatus(status map[string]private.DataPlaneCentralStatus) []*dbapi.DataPlaneDinosaurStatus {
 	// TODO implement converter
 	var res []*dbapi.DataPlaneDinosaurStatus
 	return res

@@ -5,20 +5,20 @@ import (
 	v1 "github.com/stackrox/acs-fleet-manager/pkg/api/manageddinosaurs.manageddinosaur.mas/v1"
 )
 
-func PresentManagedDinosaur(from *v1.ManagedDinosaur) private.ManagedDinosaur {
+func PresentManagedDinosaur(from *v1.ManagedDinosaur) private.ManagedCentral {
 	// TODO implement presenter
-	res := private.ManagedDinosaur{
+	res := private.ManagedCentral{
 		Id:   from.Annotations["mas/id"],
 		Kind: from.Kind,
-		Metadata: private.ManagedDinosaurAllOfMetadata{
+		Metadata: private.ManagedCentralAllOfMetadata{
 			Name:      from.Name,
 			Namespace: from.Namespace,
-			Annotations: private.ManagedDinosaurAllOfMetadataAnnotations{
+			Annotations: private.ManagedCentralAllOfMetadataAnnotations{
 				MasId:          from.Annotations["mas/id"],
 				MasPlacementId: from.Annotations["mas/placementId"],
 			},
 		},
-		Spec: private.ManagedDinosaurAllOfSpec{
+		Spec: private.ManagedCentralAllOfSpec{
 			// TODO implement your spec fields here
 		},
 	}
