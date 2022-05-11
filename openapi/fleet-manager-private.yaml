@@ -102,7 +102,7 @@ paths:
       operationId: updateCentralClusterStatus
       summary: Update the status of Central components on an agent cluster
 
-  '/api/rhacs/v1/agent-clusters/{id}/central':
+  '/api/rhacs/v1/agent-clusters/{id}/centrals':
     get:
       tags:
         - Agent Clusters
