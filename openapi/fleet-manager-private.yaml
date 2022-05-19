@@ -229,7 +229,14 @@ components:
 
             spec:
               type: object
-              properties:   
+              properties:
+                oauth:
+                  type: object
+                  properties:
+                    clientId:
+                      type: string
+                    clientSecret:
+                      type: string
                 owners:
                   type: array
                   items:
@@ -416,6 +423,9 @@ components:
           versions:
             dinosaur: 2.7.0
             dinosaurOperator: 0.21.2
+          oauth:
+            clientId: "rhacs-rhsso-idp-client-id"
+            clientSecret: "rhacs-rhsso-idp-client-secret"
           deleted: false
     DataPlaneDinosaurStatusRequestExample:
       value:

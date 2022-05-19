@@ -19,6 +19,10 @@ func PresentManagedDinosaur(from *v1.ManagedDinosaur) private.ManagedDinosaur {
 			},
 		},
 		Spec: private.ManagedDinosaurAllOfSpec{
+			Oauth: private.ManagedDinosaurAllOfSpecOauth{
+				ClientId:     from.Spec.Oauth.ClientId,
+				ClientSecret: from.Spec.Oauth.ClientSecret,
+			},
 			// TODO implement your spec fields here
 		},
 	}

@@ -11,6 +11,7 @@ package private
 
 // ManagedDinosaurAllOfSpec struct for ManagedDinosaurAllOfSpec
 type ManagedDinosaurAllOfSpec struct {
+	Oauth    ManagedDinosaurAllOfSpecOauth    `json:"oauth,omitempty"`
 	Owners   []string                         `json:"owners,omitempty"`
 	Endpoint ManagedDinosaurAllOfSpecEndpoint `json:"endpoint,omitempty"`
 	Versions ManagedDinosaurVersions          `json:"versions,omitempty"`

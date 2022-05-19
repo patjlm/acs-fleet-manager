@@ -43,6 +43,10 @@ type DinosaurRequest struct {
 	// We store this in the database to ensure that old dinosaurs whose namespace contained "owner-<dinosaur-id>" information will continue to work.
 	Namespace        string `json:"namespace"`
 	RoutesCreationId string `json:"routes_creation_id"`
+
+	ClientId        string `json:"client_id"`
+	ClientSecret    string `json:"client_secret"`
+	ClientSecretRef string `json:"client_secret_ref"`
 }
 
 type DinosaurList []*DinosaurRequest

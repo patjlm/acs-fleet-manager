@@ -202,6 +202,9 @@ components:
           versions:
             dinosaur: 2.7.0
             dinosaurOperator: 0.21.2
+          oauth:
+            clientId: rhacs-rhsso-idp-client-id
+            clientSecret: rhacs-rhsso-idp-client-secret
           deleted: false
     DataPlaneDinosaurStatusRequestExample:
       value:
@@ -375,6 +378,12 @@ components:
           type: string
         annotations:
           $ref: '#/components/schemas/ManagedDinosaur_allOf_metadata_annotations'
+    ManagedDinosaur_allOf_spec_oauth:
+      properties:
+        clientId:
+          type: string
+        clientSecret:
+          type: string
     ManagedDinosaur_allOf_spec_endpoint_tls:
       nullable: true
       properties:
@@ -390,6 +399,8 @@ components:
           $ref: '#/components/schemas/ManagedDinosaur_allOf_spec_endpoint_tls'
     ManagedDinosaur_allOf_spec:
       properties:
+        oauth:
+          $ref: '#/components/schemas/ManagedDinosaur_allOf_spec_oauth'
         owners:
           items:
             type: string

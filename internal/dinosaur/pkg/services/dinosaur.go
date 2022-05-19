@@ -89,8 +89,10 @@ type DinosaurService interface {
 	CountByStatus(status []constants2.DinosaurStatus) ([]DinosaurStatusCount, error)
 	CountByRegionAndInstanceType() ([]DinosaurRegionCount, error)
 	ListDinosaursWithRoutesNotCreated() ([]*dbapi.DinosaurRequest, *errors.ServiceError)
+	ListDinosaursWithoutSsoClients() ([]*dbapi.DinosaurRequest, *errors.ServiceError)
 	VerifyAndUpdateDinosaurAdmin(ctx context.Context, dinosaurRequest *dbapi.DinosaurRequest) *errors.ServiceError
 	ListComponentVersions() ([]DinosaurComponentVersions, error)
+	CreateSsoClient(dinosaur *dbapi.DinosaurRequest) (string, string, *errors.ServiceError)
 }
 
 var _ DinosaurService = &dinosaurService{}
@@ -99,6 +101,7 @@ type dinosaurService struct {
 	connectionFactory      *db.ConnectionFactory
 	clusterService         ClusterService
 	keycloakService        services.KeycloakService
+	vaultService           VaultService
 	dinosaurConfig         *config.DinosaurConfig
 	awsConfig              *config.AWSConfig
 	quotaServiceFactory    QuotaServiceFactory
@@ -106,6 +109,18 @@ type dinosaurService struct {
 	awsClientFactory       aws.ClientFactory
 	authService            authorization.Authorization
 	dataplaneClusterConfig *config.DataplaneClusterConfig
+}
+
+func (k *dinosaurService) CreateSsoClient(dinosaur *dbapi.DinosaurRequest) (string, string, *errors.ServiceError) {
+	clientId, err := k.keycloakService.RegisterDinosaurClientInSSO(dinosaur.Namespace, dinosaur.OrganisationId)
+	if err != nil {
+		return "", "", err
+	}
+	clientSecret, err := k.keycloakService.GetDinosaurClientSecret(clientId)
+	if err != nil {
+		return "", "", err
+	}
+	return clientId, clientSecret, nil
 }
 
 func NewDinosaurService(connectionFactory *db.ConnectionFactory, clusterService ClusterService, keycloakService services.DinosaurKeycloakService, dinosaurConfig *config.DinosaurConfig, dataplaneClusterConfig *config.DataplaneClusterConfig, awsConfig *config.AWSConfig, quotaServiceFactory QuotaServiceFactory, awsClientFactory aws.ClientFactory, authorizationService authorization.Authorization) *dinosaurService {
@@ -461,6 +476,19 @@ func (k *dinosaurService) Delete(dinosaurRequest *dbapi.DinosaurRequest) *errors
 		}
 	}
 
+	if dinosaurRequest.ClientId != "" {
+		err := k.keycloakService.DeRegisterClientInSSO(dinosaurRequest.ClientId)
+		if err != nil {
+			return err
+		}
+	}
+	if dinosaurRequest.ClientSecretRef != "" {
+		err := k.vaultService.DeleteSecretString(dinosaurRequest.ClientSecretRef)
+		if err != nil {
+			return errors.NewWithCause(errors.ErrorGeneral, err, "Cannot delete client secret reference")
+		}
+	}
+
 	// soft delete the dinosaur request
 	if err := dbConn.Delete(dinosaurRequest).Error; err != nil {
 		return errors.NewWithCause(errors.ErrorGeneral, err, "unable to delete dinosaur request with id %s", dinosaurRequest.ID)
@@ -555,11 +583,26 @@ func (k *dinosaurService) GetManagedDinosaurByClusterID(clusterID string) ([]man
 	var res []manageddinosaur.ManagedDinosaur
 	// convert dinosaur requests to managed dinosaur
 	for _, dinosaurRequest := range dinosaurRequestList {
+		err := enrichWithClientSecret(dinosaurRequest, k.vaultService)
+		if err != nil {
+			return nil, errors.NewWithCause(errors.ErrorGeneral, err, "unable to obtain client secret from vault")
+		}
 		mk := BuildManagedDinosaurCR(dinosaurRequest, k.dinosaurConfig, k.keycloakService.GetConfig())
 		res = append(res, *mk)
 	}
 
 	return res, nil
+}
+
+func enrichWithClientSecret(request *dbapi.DinosaurRequest, service VaultService) error {
+	if request.ClientSecretRef != "" {
+		secret, err := service.GetSecretString(request.ClientSecretRef)
+		if err != nil {
+			return err
+		}
+		request.ClientSecret = secret
+	}
+	return nil
 }
 
 func (k *dinosaurService) Update(dinosaurRequest *dbapi.DinosaurRequest) *errors.ServiceError {
@@ -778,6 +821,15 @@ func (k *dinosaurService) ListDinosaursWithRoutesNotCreated() ([]*dbapi.Dinosaur
 	return results, nil
 }
 
+func (k *dinosaurService) ListDinosaursWithoutSsoClients() ([]*dbapi.DinosaurRequest, *errors.ServiceError) {
+	dbConn := k.connectionFactory.New()
+	var results []*dbapi.DinosaurRequest
+	if err := dbConn.Where("client_id IS NOT NULL").Find(&results).Error; err != nil {
+		return nil, errors.NewWithCause(errors.ErrorGeneral, err, "failed to list dinosaur requests")
+	}
+	return results, nil
+}
+
 func BuildManagedDinosaurCR(dinosaurRequest *dbapi.DinosaurRequest, dinosaurConfig *config.DinosaurConfig, keycloakConfig *keycloak.KeycloakConfig) *manageddinosaur.ManagedDinosaur {
 	managedDinosaurCR := &manageddinosaur.ManagedDinosaur{
 		Id: dinosaurRequest.ID,
@@ -794,6 +846,10 @@ func BuildManagedDinosaurCR(dinosaurRequest *dbapi.DinosaurRequest, dinosaurConf
 			},
 		},
 		Spec: manageddinosaur.ManagedDinosaurSpec{
+			Oauth: manageddinosaur.OauthSpec{
+				ClientId:     dinosaurRequest.ClientId,
+				ClientSecret: dinosaurRequest.ClientSecret,
+			},
 			Endpoint: manageddinosaur.EndpointSpec{
 				Host: dinosaurRequest.Host,
 			},

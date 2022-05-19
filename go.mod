@@ -8,6 +8,7 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/auth0/go-jwt-middleware v0.0.0-20190805220309-36081240882b
 	github.com/aws/aws-sdk-go v1.36.5
+	github.com/aws/aws-secretsmanager-caching-go v1.1.0
 	github.com/blang/semver/v4 v4.0.0
 	github.com/bxcodec/faker/v3 v3.2.0
 	github.com/cenkalti/backoff/v4 v4.1.0 // indirect
@@ -17,16 +18,18 @@ require (
 	github.com/getsentry/sentry-go v0.3.1
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
-	github.com/go-resty/resty/v2 v2.3.0
+	github.com/go-resty/resty/v2 v2.6.0
 	github.com/goava/di v1.11.0
 	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.4
 	github.com/mattn/go-sqlite3 v1.14.3 // indirect
 	github.com/mendsley/gojwk v0.0.0-20141217222730-4d5ec6e58103
+	github.com/microcosm-cc/bluemonday v1.0.18 // indirect
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/gomega v1.17.0
 	github.com/openshift-online/ocm-sdk-go v0.1.235
@@ -40,15 +43,17 @@ require (
 	github.com/prometheus/common v0.20.0
 	github.com/rs/xid v1.2.1
 	github.com/santhosh-tekuri/jsonschema/v3 v3.0.1
+	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/selvatico/go-mocket v1.0.7
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spyzhov/ajson v0.4.2
+	github.com/stretchr/testify v1.7.0
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/yaacov/tree-search-language v0.0.0-20190923184055-1c2dad2e354b
 	github.com/zgalor/weberr v0.6.0
-	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
-	golang.org/x/sys v0.0.0-20220517195934-5e4e11fc645e // indirect
+	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b
+	golang.org/x/sys v0.0.0-20220517195934-5e4e11fc645e
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/resty.v1 v1.12.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -57,4 +62,5 @@ require (
 	k8s.io/api v0.21.2
 	k8s.io/apimachinery v0.21.2
 	k8s.io/client-go v0.21.2
+	sigs.k8s.io/yaml v1.3.0 // indirect
 )
