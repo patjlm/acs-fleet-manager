@@ -14,8 +14,6 @@ import (
 	"github.com/stackrox/acs-fleet-manager/pkg/server/logging"
 	"github.com/stackrox/acs-fleet-manager/pkg/services/sentry"
 
-	"github.com/openshift-online/ocm-sdk-go/authentication"
-
 	_ "github.com/auth0/go-jwt-middleware/v2"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	_ "github.com/golang-jwt/jwt/v4"
@@ -86,15 +84,24 @@ func NewAPIServer(options ServerOptions) *ApiServer {
 	for _, loader := range options.RouteLoaders {
 		check(loader.AddRoutes(mainRouter), "error adding routes", options.SentryConfig.Timeout)
 	}
+	mainRouter.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+		fmt.Printf("Route: %s\n", route.GetName())
+		regexp, err := route.GetPathRegexp()
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Route path: %s\n", regexp)
+		return nil
+	})
 
 	// referring to the router as type http.Handler allows us to add middleware via more handlers
 	var mainHandler http.Handler = mainRouter
-	var builder *authentication.HandlerBuilder
-	options.Env.MustResolve(&builder)
+	//var builder *authentication.HandlerBuilder
+	//options.Env.MustResolve(&builder)
 
-	var err error
-	mainHandler, err = builder.Next(mainHandler).Build()
-	check(err, "Unable to create authentication handler", options.SentryConfig.Timeout)
+	//var err error
+	//mainHandler, err = builder.Next(mainHandler).Build()
+	//check(err, "Unable to create authentication handler", options.SentryConfig.Timeout)
 
 	mainHandler = gorillahandlers.CORS(
 		gorillahandlers.AllowedMethods([]string{

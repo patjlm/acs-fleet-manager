@@ -1,6 +1,7 @@
 package dinosaur
 
 import (
+	"github.com/goava/di"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/clusters"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/cmd/cloudprovider"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/cmd/cluster"
@@ -9,7 +10,6 @@ import (
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/cmd/observatorium"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/config"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/environments"
-	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/handlers"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/metrics"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/migrations"
 	"github.com/stackrox/acs-fleet-manager/internal/dinosaur/pkg/routes"
@@ -20,7 +20,6 @@ import (
 	observatoriumClient "github.com/stackrox/acs-fleet-manager/pkg/client/observatorium"
 	environments2 "github.com/stackrox/acs-fleet-manager/pkg/environments"
 	"github.com/stackrox/acs-fleet-manager/pkg/providers"
-	"github.com/goava/di"
 )
 
 func EnvConfigProviders() di.Option {
@@ -70,7 +69,7 @@ func ServiceProviders() di.Option {
 		di.Provide(services.NewClusterPlacementStrategy),
 		di.Provide(services.NewDataPlaneClusterService, di.As(new(services.DataPlaneClusterService))),
 		di.Provide(services.NewDataPlaneDinosaurService, di.As(new(services.DataPlaneDinosaurService))),
-		di.Provide(handlers.NewAuthenticationBuilder),
+		//di.Provide(handlers.NewAuthenticationBuilder),
 		di.Provide(clusters.NewDefaultProviderFactory, di.As(new(clusters.ProviderFactory))),
 		di.Provide(routes.NewRouteLoader),
 		di.Provide(quota.NewDefaultQuotaServiceFactory),

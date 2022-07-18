@@ -79,6 +79,7 @@ func (s *options) buildApiBaseRouter(mainRouter *mux.Router, basePath string, op
 	errorsHandler := coreHandlers.NewErrorsHandler()
 	metricsHandler := handlers.NewMetricsHandler(s.Observatorium)
 	serviceStatusHandler := handlers.NewServiceStatusHandler(s.Dinosaur, s.AccessControlListConfig)
+	authHandler := handlers.NewAuthHandler()
 
 	authorizeMiddleware := s.AccessControlListMiddleware.Authorize
 	requireOrgID := auth.NewRequireOrgIDMiddleware().RequireOrgID(errors.ErrorUnauthenticated)
@@ -88,6 +89,16 @@ func (s *options) buildApiBaseRouter(mainRouter *mux.Router, basePath string, op
 
 	// base path.
 	apiRouter := mainRouter.PathPrefix(basePath).Subrouter()
+
+	authRouter := apiRouter.PathPrefix("/auth").
+		Subrouter()
+	authRouter.HandleFunc("/.well-known/openid-configuration", authHandler.Config).
+		Name(logger.NewLogEvent("openid-config", "OPENID CONFIG REQUEST").ToString()).Methods(http.MethodGet)
+	authRouter.HandleFunc("/protocol/openid-connect/auth", authHandler.LoginURL).
+		Name(logger.NewLogEvent("openid-auth-url", "OPENID AUTH URL").ToString()).Methods(http.MethodGet)
+	authRouter.HandleFunc("/protocol/openid-connect/token", authHandler.Token).
+		Name(logger.NewLogEvent("openid-token", "OPENID TOKEN").ToString()).Methods(http.MethodPost)
+	print("AUTH ROUTER IS HERE")
 
 	// /v1
 	apiV1Router := apiRouter.PathPrefix("/v1").Subrouter()
