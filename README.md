@@ -39,6 +39,8 @@ ACS fleet-manager repository for the ACS managed service.
 
 #### Getting started
 
+To run fleet-manager in different ways (i.e. with docker) please refer to [running-fleet-manager.md](./docs/development/running-fleet-manager.md).
+
 ```bash
 # Export the kubeconfig path the central instance should be deployed to
 $ export KUBECONFIG=/your/kubeconfig
