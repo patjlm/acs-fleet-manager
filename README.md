@@ -1,6 +1,6 @@
 # ACS Fleet Manager
 
-This repository started as a fork of the Fleet Manager Golang Template. Its original README is preserved in its own section below.
+ACS fleet-manager repository for the ACS managed service.
 
 ## Quickstart
 
@@ -85,30 +85,22 @@ $ make db/migrate
 #### Background
 
 This project was started from a fleet-manager template with an example "Dinosaur" application as a managed service.
-The template was based on 
-
-To help you while reading the code the example service implements a simple collection
-of _dinosaurs_ and their provisioning, so you can immediately know when something is
-infrastructure or business logic. Anything that talks about dinosaurs is business logic,
-which you will want to replace with your our concepts. The rest is infrastructure, and you
-will probably want to preserve without change.
+Implementations which reference "Dinosaur" are replaced iteratively.
 
 For a real service written using the same fleet management pattern see the
 [kas-fleet-manager](https://github.com/bf2fc6cc711aee1a0c2a/kas-fleet-manager).
+Original [fleet-manager template](https://github.com/bf2fc6cc711aee1a0c2a/ffm-fleet-manager-go-template).
 
 To contact the people that created this template go to [zulip](https://bf2.zulipchat.com/).
 
 ## Additional documentation
-- [Adding new endpoint](docs/adding-a-new-endpoint.md)
-- [Adding new CLI flag](docs/adding-new-flags.md)
-- [Automated testing](docs/automated-testing.md)
-- [Deploying fleet manager via Service Delivery](docs/onboarding-with-service-delivery.md)
-- [Requesting credentials and accounts](docs/getting-credentials-and-accounts.md)
-- [Data Plane Setup](docs/data-plane-osd-cluster-options.md)
-- [Access Control](docs/access-control.md)
-- [Quota Management](docs/quota-management-list-configuration.md)
-- [Running the Service on an OpenShift cluster](./docs/deploying-fleet-manager-to-openshift.md)
-- [Explanation of JWT token claims used across the fleet-manager](docs/jwt-claims.md)
+
+- [Adding new endpoint](docs/development/adding-a-new-endpoint.md)
+- [Deploying fleet manager via Service Delivery](docs/legacy/onboarding-with-service-delivery.md)
+- [Data Plane Setup](docs/legacy/data-plane-osd-cluster-options.md)
+- [Access Control](docs/legacy/access-control.md)
+- [Quota Management](docs/legacy/quota-management-list-configuration.md)
+- [Explanation of JWT token claims used across the fleet-manager](docs/auth/jwt-claims.md)
 
 ## Contributing
 
