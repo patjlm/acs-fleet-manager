@@ -84,15 +84,6 @@ func NewAPIServer(options ServerOptions) *ApiServer {
 	for _, loader := range options.RouteLoaders {
 		check(loader.AddRoutes(mainRouter), "error adding routes", options.SentryConfig.Timeout)
 	}
-	mainRouter.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
-		fmt.Printf("Route: %s\n", route.GetName())
-		regexp, err := route.GetPathRegexp()
-		if err != nil {
-			return err
-		}
-		fmt.Printf("Route path: %s\n", regexp)
-		return nil
-	})
 
 	// referring to the router as type http.Handler allows us to add middleware via more handlers
 	var mainHandler http.Handler = mainRouter
