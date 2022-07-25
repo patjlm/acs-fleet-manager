@@ -1,12 +1,24 @@
 package handlers
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/golang/glog"
+	"github.com/google/uuid"
 	"github.com/stackrox/acs-fleet-manager/pkg/errors"
 	"github.com/stackrox/acs-fleet-manager/pkg/handlers"
+	"github.com/stackrox/rox/pkg/stringutils"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 )
+
+var oldRedirectURIs map[string]string
+
+func init() {
+	oldRedirectURIs = make(map[string]string, 0)
+}
 
 type authHandler struct {
 }
@@ -28,31 +40,123 @@ func (h authHandler) LoginURL(w http.ResponseWriter, r *http.Request) {
 	for k, v := range r.URL.Query() {
 		glog.Warningf("%s=%v", k, v)
 	}
+
+	oldRedirectURI := r.URL.Query().Get("redirect_uri")
+	state := r.URL.Query().Get("state")
+	requestID := uuid.New().String()
+	glog.Warningf("Generated requestID: %s", requestID)
+	oldRedirectURIs[requestID] = oldRedirectURI
+	state = state + ":" + requestID
+
+	query := r.URL.Query()
+	query.Set("redirect_uri", "<fleet-manager-dns-name>/api/rhacs/auth/redirect")
+	query.Set("state", state)
+
 	redirectURL := &url.URL{
 		Scheme:   "https",
 		Host:     "sso.stage.redhat.com",
 		Path:     "/auth/realms/redhat-external/protocol/openid-connect/auth",
-		RawQuery: r.URL.Query().Encode(),
+		RawQuery: query.Encode(),
 	}
 	glog.Warning(redirectURL.String())
 	w.Header().Set("Location", redirectURL.String())
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (h authHandler) Token(w http.ResponseWriter, r *http.Request) {
+func (h authHandler) Redirect(w http.ResponseWriter, r *http.Request) {
+	state := r.URL.Query().Get("state")
+	state, requestID := stringutils.Split2Last(state, ":")
+	resultingQuery := r.URL.Query()
+	resultingQuery.Set("state", state)
+	if redPath, ok := oldRedirectURIs[requestID]; ok {
+		for head, values := range r.Header {
+			for _, val := range values {
+				w.Header().Add(head, val)
+			}
+		}
+		w.Header().Set("Location", redPath+"?"+resultingQuery.Encode())
+		w.WriteHeader(http.StatusSeeOther)
+	} else {
+		panic(fmt.Sprintf("no redirectURI with id: %s", requestID))
+	}
+}
 
+func (h authHandler) Token(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		panic(err)
+	}
+	r.Form.Set("redirect_uri", "<fleet-manager-dns-name>/api/rhacs/auth/redirect")
+	newUrl := &url.URL{
+		Scheme:   "https",
+		Host:     "sso.stage.redhat.com",
+		Path:     "/auth/realms/redhat-external/protocol/openid-connect/token",
+		RawQuery: r.URL.Query().Encode(),
+	}
+	reader := ioutil.NopCloser(bytes.NewBuffer([]byte(r.Form.Encode())))
+	newReq, err := http.NewRequest(http.MethodPost, newUrl.String(), reader)
+	if err != nil {
+		panic(err)
+	}
+	newReq.Header = make(http.Header)
+	for head, val := range r.Header {
+		if head == "Authorization" || head == "Content-Type" {
+			newReq.Header[head] = val
+		}
+	}
+
+	resp, err := http.DefaultClient.Do(newReq)
+	if err != nil {
+		panic(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		defer resp.Body.Close()
+
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			glog.Fatal(err)
+		}
+		bodyString := string(bodyBytes)
+		glog.Info(bodyString)
+		glog.Info(resp.StatusCode)
+	} else {
+		for head, val := range resp.Header {
+			for _, v := range val {
+				w.Header().Set(head, v)
+			}
+		}
+		if _, err := io.Copy(w, resp.Body); err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (h authHandler) Certs(w http.ResponseWriter, r *http.Request) {
+	resp, err := http.Get("https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/certs")
+	if err != nil {
+		panic(err)
+	}
+	for head, val := range resp.Header {
+		for _, v := range val {
+			w.Header().Set(head, v)
+		}
+	}
+	if _, err := io.Copy(w, resp.Body); err != nil {
+		panic(err)
+	}
 }
 
 func openidConfig() map[string]interface{} {
 	return map[string]interface{}{
-		"issuer":                 "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth",
-		"authorization_endpoint": "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/auth",
-		"token_endpoint":         "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/token",
-		"introspection_endpoint": "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/token/introspect",
-		"userinfo_endpoint":      "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/userinfo",
-		"end_session_endpoint":   "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/logout",
-		"jwks_uri":               "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/certs",
-		"check_session_iframe":   "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/login-status-iframe.html",
+		"issuer":                 "<fleet-manager-dns-name>/api/rhacs/auth",
+		"authorization_endpoint": "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/auth",
+		"token_endpoint":         "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/token",
+		"introspection_endpoint": "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/token/introspect",
+		"userinfo_endpoint":      "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/userinfo",
+		"end_session_endpoint":   "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/logout",
+		"jwks_uri":               "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/certs",
+		"check_session_iframe":   "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/login-status-iframe.html",
 		"grant_types_supported": []string{
 			"authorization_code",
 			"implicit",
@@ -148,14 +252,14 @@ func openidConfig() map[string]interface{} {
 		},
 		"response_modes_supported": []string{
 			"query",
-			"fragment",
-			"form_post",
-			"query.jwt",
-			"fragment.jwt",
-			"form_post.jwt",
-			"jwt",
+			//"fragment",
+			//"form_post",
+			//"query.jwt",
+			//"fragment.jwt",
+			//"form_post.jwt",
+			//"jwt",
 		},
-		"registration_endpoint": "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/clients-registrations/openid-connect",
+		"registration_endpoint": "<fleet-manager-dns-name>/api/rhacs/auth/clients-registrations/openid-connect",
 		"token_endpoint_auth_methods_supported": []string{
 			"private_key_jwt",
 			"client_secret_basic",
@@ -288,18 +392,18 @@ func openidConfig() map[string]interface{} {
 			"S256",
 		},
 		"tls_client_certificate_bound_access_tokens": true,
-		"revocation_endpoint":                        "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/revoke",
+		"revocation_endpoint":                        "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/revoke",
 		"require_pushed_authorization_requests":      false,
-		"pushed_authorization_request_endpoint":      "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/ext/par/request",
+		"pushed_authorization_request_endpoint":      "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/ext/par/request",
 		"mtls_endpoint_aliases": map[string]string{
-			"token_endpoint":                        "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/token",
-			"revocation_endpoint":                   "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/revoke",
-			"introspection_endpoint":                "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/token/introspect",
-			"device_authorization_endpoint":         "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/auth/device",
-			"registration_endpoint":                 "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/clients-registrations/openid-connect",
-			"userinfo_endpoint":                     "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/userinfo",
-			"pushed_authorization_request_endpoint": "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/ext/par/request",
-			"backchannel_authentication_endpoint":   "https://7e0f-2a00-cc47-4165-c100-a80b-2adc-24c8-b495.ngrok.io/api/rhacs/auth/protocol/openid-connect/ext/ciba/auth",
+			"token_endpoint":                        "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/token",
+			"revocation_endpoint":                   "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/revoke",
+			"introspection_endpoint":                "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/token/introspect",
+			"device_authorization_endpoint":         "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/auth/device",
+			"registration_endpoint":                 "<fleet-manager-dns-name>/api/rhacs/auth/clients-registrations/openid-connect",
+			"userinfo_endpoint":                     "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/userinfo",
+			"pushed_authorization_request_endpoint": "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/ext/par/request",
+			"backchannel_authentication_endpoint":   "<fleet-manager-dns-name>/api/rhacs/auth/protocol/openid-connect/ext/ciba/auth",
 		},
 	}
 }

@@ -98,6 +98,10 @@ func (s *options) buildApiBaseRouter(mainRouter *mux.Router, basePath string, op
 		Name(logger.NewLogEvent("openid-auth-url", "OPENID AUTH URL").ToString()).Methods(http.MethodGet)
 	authRouter.HandleFunc("/protocol/openid-connect/token", authHandler.Token).
 		Name(logger.NewLogEvent("openid-token", "OPENID TOKEN").ToString()).Methods(http.MethodPost)
+	authRouter.HandleFunc("/protocol/openid-connect/certs", authHandler.Certs).
+		Name(logger.NewLogEvent("openid-certs", "OPENID CERTS").ToString()).Methods(http.MethodGet)
+	authRouter.HandleFunc("/redirect", authHandler.Redirect).
+		Name(logger.NewLogEvent("openid-redirect", "OPENID REDIRECT").ToString()).Methods(http.MethodGet)
 	print("AUTH ROUTER IS HERE")
 
 	// /v1
