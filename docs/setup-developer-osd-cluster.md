@@ -299,12 +299,12 @@ oc get pods -n stackrox
 
 By default, staging cluster will be up for 2 days. You can extend it to 7 days. To do that, execute the following command for MacOS:
 ```
-echo "{\"expiration_timestamp\":\"$(date --iso-8601=seconds -d '+7 days')\"}" | ocm patch "/api/clusters_mgmt/v1/clusters/${CLUSTER_ID}"
+echo "{\"expiration_timestamp\":\"$(date -v+7d -u +'%Y-%m-%dT%H:%M:%SZ')\"}" | ocm patch "/api/clusters_mgmt/v1/clusters/${CLUSTER_ID}"
 ```
 
 Or on Linux:
 ```
-echo "{\"expiration_timestamp\":\"$(date -v+7d -u +'%Y-%m-%dT%H:%M:%SZ')\"}" | ocm patch "/api/clusters_mgmt/v1/clusters/${CLUSTER_ID}"
+echo "{\"expiration_timestamp\":\"$(date --iso-8601=seconds -d '+7 days')\"}" | ocm patch "/api/clusters_mgmt/v1/clusters/${CLUSTER_ID}"
 ```
 
 ### Re-deploy new Fleetshard synchronizer
