@@ -354,7 +354,7 @@ test/cluster/cleanup:
 test/e2e: gotestsum
 	CLUSTER_ID=1234567890abcdef1234567890abcdef \
 	RUN_E2E=true \
-	$(GOTESTSUM) --format $(GOTESTSUM_FORMAT) -- -bench -v -count=1 -p 1 -timeout $(TEST_TIMEOUT) $(TESTFLAGS) ./e2e/...
+	$(GOTESTSUM) --format $(GOTESTSUM_FORMAT) -- $(GOARGS) -bench -v -count=1 -p 1 -timeout $(TEST_TIMEOUT) $(TESTFLAGS) ./e2e/...
 .PHONY: test/e2e
 
 test/e2e/cleanup:
