@@ -80,8 +80,10 @@ ifeq (, $(shell which $(LOCAL_BIN_PATH)/golangci-lint 2> /dev/null))
 	}
 endif
 
-GOTESTSUM ?=$(LOCAL_BIN_PATH)/gotestsum
+LOCAL_GOTESTSUM = $(LOCAL_BIN_PATH)/gotestsum
+GOTESTSUM ?= $(LOCAL_GOTESTSUM)
 gotestsum:
+ifeq ($(GOTESTSUM), $(LOCAL_GOTESTSUM))
 ifeq (, $(shell which $(LOCAL_BIN_PATH)/gotestsum 2> /dev/null))
 	@{ \
 	set -e ;\
@@ -93,6 +95,7 @@ ifeq (, $(shell which $(LOCAL_BIN_PATH)/gotestsum 2> /dev/null))
 	$(GO) build -o ${LOCAL_BIN_PATH}/gotestsum gotest.tools/gotestsum ;\
 	rm -rf $$GOTESTSUM_TMP_DIR ;\
 	}
+endif
 endif
 
 MOQ ?= ${LOCAL_BIN_PATH}/moq
