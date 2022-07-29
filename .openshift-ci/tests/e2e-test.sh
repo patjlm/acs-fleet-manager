@@ -25,6 +25,10 @@ if [[ "${OPENSHIFT_CI:-}" == "true" ]]; then
     export QUAY_TOKEN="${IMAGE_PUSH_PASSWORD:-}"
     export CLUSTER_TYPE="openshift-ci"
     export GOARGS="-mod=mod" # For some reason we need this in the offical base images.
+
+    # Workaround at the moment.
+    unset OCM_SERVICE_CLIENT_ID
+    unset OCM_SERVICE_CLIENT_SECRET
 fi
 
 init
@@ -66,8 +70,8 @@ if [[ "$RUN_AUTH_E2E" == "true" ]]; then
     export STATIC_TOKEN=${STATIC_TOKEN:-$FLEET_STATIC_TOKEN}
 
     # Ensure we set the OCM refresh token once more, in case AUTH_TYPE!=OCM.
-    ocm login --token ${OCM_OFFLINE_TOKEN}
-    OCM_SERVICE_TOKEN=$(ocm token --refresh)
+    ocm login --token ${OCM_OFFLINE_TOKEN} -v 5
+    OCM_SERVICE_TOKEN=$(ocm token --refresh -v 5)
     export OCM_SERVICE_TOKEN
 
     # The RH SSO secrets are correctly set up within vault, the tests will be skipped if they are empty.
@@ -77,8 +81,8 @@ case "$AUTH_TYPE" in
 OCM)
 
     log "Refreshing OCM Service Token"
-    ocm login --token ${OCM_OFFLINE_TOKEN}
-    OCM_SERVICE_TOKEN=$(ocm token --refresh)
+    ocm login --token ${OCM_OFFLINE_TOKEN} -v 5
+    OCM_SERVICE_TOKEN=$(ocm token --refresh -v 5)
     export OCM_SERVICE_TOKEN
     ;;
 
