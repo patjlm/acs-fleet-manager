@@ -57,6 +57,7 @@ if [[ "$RUN_AUTH_E2E" == "true" ]]; then
     export STATIC_TOKEN=${STATIC_TOKEN:-$FLEET_STATIC_TOKEN}
 
     # Ensure we set the OCM refresh token once more, in case AUTH_TYPE!=OCM.
+    ocm login --client-id ${OCM_SERVICE_CLIENT_ID} --client-secret ${OCM_SERVICE_CLIENT_SECRET}
     OCM_SERVICE_TOKEN=$(ocm token --refresh)
     export OCM_SERVICE_TOKEN
 
@@ -66,7 +67,8 @@ fi
 case "$AUTH_TYPE" in
 OCM)
 
-    log "Refreshing OCM Service Token"
+    log "Logging in with client credentials + Refreshing OCM Service Token"
+    ocm login --client-id ${OCM_SERVICE_CLIENT_ID} --client-secret ${OCM_SERVICE_CLIENT_SECRET}
     OCM_SERVICE_TOKEN=$(ocm token --refresh)
     export OCM_SERVICE_TOKEN
     ;;
